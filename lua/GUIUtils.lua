@@ -853,7 +853,7 @@ if rex then
 		local args = {...}
 		local n = #args
 
-		if func == 'echoLink' then
+		if func == 'echoLink' or func == "insertLink" then
 			if n < 3 then
 				error'Insufficient arguments, usage: ([window, ] string, command, hint)'
 			elseif n == 3 then
@@ -910,12 +910,11 @@ if rex then
 			else
 				if func == 'echo' or func == 'insertText' then
 					if win then out(win, v) else out(v) end
-					if func == 'insertText' then
-						moveCursor(window or "main", getColumnNumber() + string.len(v), getLineNumber())
-					end
 				else
-					-- if win and fmt then setUnderline(win, true) elseif fmt then setUnderline(true) end -- not sure if underline is necessary unless asked for
-					if win then out(win, v, cmd, hint, (fmt == true and true or false)) else out(v, cmd, hint, (fmt == true and true or false)) end
+					if win then out(win, v, cmd, hint, true) else out(v, cmd, hint, true) end
+				end
+				if func == 'insertText' or func == 'insertLink' then
+					moveCursor(win or "main", getColumnNumber(win or "main") + string.len(v), getLineNumber(win or "main"))
 				end
 			end
 		end
@@ -1015,6 +1014,33 @@ if rex then
 --- @see xEcho
 --- @see cecho
 	function cechoLink(...) xEcho("Color", "echoLink", ...) end
+	
+	
+--- Inserts a link with embedded hex color information.
+---
+--- @usage cechoLink([window, ] string, command, hint)
+---
+--- @see xEcho
+--- @see cecho
+	function cinsertLink(...) xEcho("Hex", "insertLink", ...) end
+	
+	
+--- Inserts a link with embedded decimal color information.
+---
+--- @usage cechoLink([window, ] string, command, hint)
+---
+--- @see xEcho
+--- @see cecho
+	function dinsertLink(...) xEcho("Decimal", "insertLink", ...) end	
+	
+	
+--- Inserts a link with embedded color name information.
+---
+--- @usage cechoLink([window, ] string, command, hint)
+---
+--- @see xEcho
+--- @see cecho
+	function cinsertLink(...) xEcho("Color", "insertLink", ...) end
 
 
 	-- Backwards compatibility
